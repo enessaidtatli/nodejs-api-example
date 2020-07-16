@@ -5,38 +5,114 @@ const Movie = require('../models/Movie');
 
 /* GET users listing. */
 router.get('/', (req, res, next) => {
-  res.json({
-    status: 1
-  })
+    const promise = Movie.find({});
+    promise.then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        res.json(err);
+    });
 });
 
 router.post('/', (req, res, next) => {
 
-  const movie = new Movie(req.body);
- /* const { title, imdb_score, category, country, year } = req.body;
-  const movie = new Movie({
-    title: title,
-    imdb_score: imdb_score,
-    category: category,
-    country: country,
-    year: year
-  })*/
+    const movie = new Movie(req.body);
+    /* const { title, imdb_score, category, country, year } = req.body;
+     const movie = new Movie({
+       title: title,
+       imdb_score: imdb_score,
+       category: category,
+       country: country,
+       year: year
+     })*/
 
-/*  movie.save((err, data) => {
-    if(err)
-      res.json(err);
+    /*  movie.save((err, data) => {
+        if(err)
+          res.json(err);
 
-    res.json({status: 'Kayıt Başarılı'});
-  })*/
+        res.json({status: 'Kayıt Başarılı'});
+      })*/
 
-  const promise = movie.save();
-  promise.then((data) => {
-    res.json({status: 'Başarılı Kayıt'});
-  }).catch((err) =>{
-    res.json(err);
-  });
-
+    const promise = movie.save();
+    promise.then((data) => {
+        res.json({status: 'Başarılı Kayıt'});
+    }).catch((err) => {
+        res.json(err);
+    });
 });
 
+router.get('/:movie_id', (req, res, next) => {
+    const promise = Movie.findById(req.params.movie_id);
+    promise.then((movie) => {
+        if (!movie)
+            next({message: 'The movie was not found!', code: 88});
+        res.json(movie)
+    }).catch((err) => {
+        res.json(err);
+    });
+})
+
+router.put('/:movie_id', (req, res, next) => {
+    const promise = Movie.findByIdAndUpdate(
+        req.params.movie_id,
+        req.body,
+        {
+            new: true
+        }
+    );
+    promise.then((movie) => {
+        if (!movie)
+            next({message: 'The movie was not found!', code: 88});
+
+        res.json(movie)
+    }).catch((err) => {
+        res.json(err);
+    });
+})
+
+router.delete('/:movie_id', (req, res, next) => {
+    const promise = Movie.findByIdAndRemove(req.params.movie_id);
+
+    promise.then((movie) => {
+        if (!movie)
+            next({message: 'The movie was not found!', code: 88});
+
+        res.json({status: 'Sime işlemi başarılı'})
+    }).catch((err) => {
+        res.json(err);
+    });
+});
+
+//Get Top 10 List
+router.get('/top/10', (req, res, next) => {
+    const promise = Movie.find({})
+        .limit(10)
+        .sort({
+            imdb_score: -1
+        });
+
+    promise.then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        res.json(err);
+    });
+});
+
+//Between start date and end date
+router.get('/between/:start_year/:end_year', (req, res) => {
+    const { start_year, end_year } = req.params;
+    const promise = Movie.find(
+        {
+            year: {
+                '$gte': parseInt(start_year),
+                '$lte': parseInt(end_year)
+            }
+        });
+
+    promise.then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        res.json(err);
+    });
+});
 
 module.exports = router;
