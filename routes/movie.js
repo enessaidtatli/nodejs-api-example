@@ -4,8 +4,20 @@ const Movie = require('../models/Movie');
 
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
-    const promise = Movie.find({});
+router.get('/', (req, res) => {
+    const promise = Movie.aggregate([
+        {
+            $lookup: {
+                from: "directors",
+                localField: "director_id",
+                foreignField: "_id",
+                as: 'director'
+            }
+        },
+        {
+            $unwind: "$director"
+        }
+    ]);
     promise.then((data) => {
         res.json(data);
     }).catch((err) => {
@@ -13,7 +25,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
 
     const movie = new Movie(req.body);
     /* const { title, imdb_score, category, country, year } = req.body;
@@ -33,8 +45,12 @@ router.post('/', (req, res, next) => {
       })*/
 
     const promise = movie.save();
+
     promise.then((data) => {
-        res.json({status: 'Başarılı Kayıt'});
+        res.json({
+            status: 'Başarılı Kayıt',
+            data: data
+        });
     }).catch((err) => {
         res.json(err);
     });
@@ -83,7 +99,7 @@ router.delete('/:movie_id', (req, res, next) => {
 });
 
 //Get Top 10 List
-router.get('/top/10', (req, res, next) => {
+router.get('/top/10', (req, res) => {
     const promise = Movie.find({})
         .limit(10)
         .sort({
@@ -99,7 +115,7 @@ router.get('/top/10', (req, res, next) => {
 
 //Between start date and end date
 router.get('/between/:start_year/:end_year', (req, res) => {
-    const { start_year, end_year } = req.params;
+    const {start_year, end_year} = req.params;
     const promise = Movie.find(
         {
             year: {
