@@ -7,7 +7,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 const movieRouter = require('./routes/movie');
 const directorRouter = require('./routes/director');
-
+const config = require('./config');
 const app = express();
 
 //db connection
@@ -15,6 +15,7 @@ const db = require('./heper/db')();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('api_secret_key', config.api_secret_key);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
