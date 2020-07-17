@@ -2,9 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const DirectorSchema = new Schema({
-    name: String,
-    surname: String,
-    bio: String,
+    name: {
+        type: String,
+        maxlength: 30,
+        minlength: 2
+    },
+    surname: {
+        type: String,
+        maxlength: 30,
+        minlength: 2
+    },
+    bio: {
+        type: String,
+        maxlength: 1000,
+        minlength: 60
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -12,4 +24,4 @@ const DirectorSchema = new Schema({
 });
 
 
-module.exports = mongoose.model('director', DirectorSchema);
+module.exports = mongoose.model('directors', DirectorSchema);
