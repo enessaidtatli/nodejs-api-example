@@ -3,16 +3,6 @@ const router = express.Router();
 const Director = require('../models/Director');
 const mongoose = require('mongoose');
 
-/* GET users listing. */
-/*router.get('/', (req, res, next) => {
-    const promise = Director.find({});
-    promise.then((data) => {
-        res.json(data);
-    }).catch((err) => {
-        res.json(err);
-    });
-});*/
-
 router.get('/', (req, res) => {
     const promise = Director.aggregate([
         {
@@ -76,8 +66,6 @@ router.post('/', (req, res, next) => {
     });
 });
 
-
-
 router.get('/:director_id', (req, res, next) => {
     const promise = Director.aggregate([
         {
@@ -133,30 +121,30 @@ router.get('/:director_id', (req, res, next) => {
     });
 })
 
-router.put('/:movie_id', (req, res, next) => {
-    const promise = Movie.findByIdAndUpdate(
-        req.params.movie_id,
+router.put('/:director_id', (req, res, next) => {
+    const promise = Director.findByIdAndUpdate(
+        req.params.director_id,
         req.body,
         {
             new: true
         }
     );
-    promise.then((movie) => {
-        if (!movie)
-            next({message: 'The movie was not found!', code: 88});
+    promise.then((director) => {
+        if (!director)
+            next({message: 'The director was not found!', code: 88});
 
-        res.json(movie)
+        res.json(director)
     }).catch((err) => {
         res.json(err);
     });
 })
 
-router.delete('/:movie_id', (req, res, next) => {
-    const promise = Movie.findByIdAndRemove(req.params.movie_id);
+router.delete('/:director_id', (req, res, next) => {
+    const promise = Director.findByIdAndRemove(req.params.director_id);
 
-    promise.then((movie) => {
-        if (!movie)
-            next({message: 'The movie was not found!', code: 88});
+    promise.then((director) => {
+        if (!director)
+            next({message: 'The director was not found!', code: 88});
 
         res.json({status: 'Sime işlemi başarılı'})
     }).catch((err) => {
