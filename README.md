@@ -1,3 +1,4 @@
+[![Build status](https://travis-ci.org/enessaidtatli/nodejs-api-example.svg)]
 # nodejs-api-example
 nodejs udemy education example application
 # Movies
