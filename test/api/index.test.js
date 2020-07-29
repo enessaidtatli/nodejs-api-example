@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 describe('Node Server', () => {
     it('(GET /) returns the homepage', (done) => {
         chai.request(server)
-            .get('/')
+            .get('/s')
             .end((err, res) => {
                 res.should.have.status(200);
                 done();
